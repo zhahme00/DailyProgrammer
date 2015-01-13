@@ -1,9 +1,12 @@
 package com.zee.testing;
 
+import java.util.Random;
+
 // http://www.reddit.com/r/dailyprogrammer/comments/2s7ezp/20150112_challenge_197_easy_isbn_validator/
 public class Daily197E {
     public static void main(String[] args) {
-        System.out.println(isValidISBN(args[0]) ? "Valid" : "Invalid");
+        String isbn = getISBN();
+        System.out.format("Generated ISBN %s is %s\n", isbn, isValidISBN(isbn) ? "Valid" : "Invalid");
     }
 
     public static boolean isValidISBN(String isbn) {
@@ -24,5 +27,29 @@ public class Daily197E {
         }
 
         return sum % 11 == 0;
+    }
+
+    public static String getISBN() {
+        return getISBN(new Random());
+    }
+
+    public static String getISBN(Random r) {
+        // generate 1 - 9 digits.
+        int[] octets = new int[10];
+        int sum = 0;
+        for (int i = 10; i >= 2; i--) {
+            sum += (octets[10 - i] = r.nextInt(11)) * i;
+        }
+
+        // generate 10th digit.
+        octets[9] = (11 - (sum % 11)) % 11;
+
+        // stringify
+        StringBuilder sb = new StringBuilder(10);
+        for (int i : octets) {
+            sb.append(i == 10 ? "X" : Integer.toString(i));
+        }
+
+        return sb.toString();
     }
 }
