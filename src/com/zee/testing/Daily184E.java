@@ -10,7 +10,9 @@ public class Daily184E {
         Daily184E d = new Daily184E();
         d.push(8); d.push(6); d.push(9); d.push(4); d.push(3); d.push(10);
         //d.pop(); d.pop();
-        d.removeGreater(5);
+        d.removeGreater(4);
+        d.push(11); d.push(7);
+        d.removeGreater(4);
         d.printStack();
         System.out.println();
         d.printOrdered();
@@ -32,6 +34,22 @@ public class Daily184E {
             this.item = item;
             this.previousStackItem = previousStackItem;
         }
+
+        public void unlink(LinkedItem nextStackItem) {
+            if (nextStackItem != null) {
+                nextStackItem.previousStackItem = this.previousStackItem;
+            }
+
+            if (this.previousOrderedItem != null) {
+                this.previousOrderedItem.nextOrderedItem = this.nextOrderedItem;
+            }
+
+            if (this.nextOrderedItem != null) {
+                this.nextOrderedItem.previousOrderedItem = this.previousOrderedItem;
+            }
+        }
+
+        public void link() {}
     }
 
     private LinkedItem topStackItem;
@@ -94,14 +112,19 @@ public class Daily184E {
     public void removeGreater(int item) {
         LinkedItem previous = null;
         LinkedItem current = this.topStackItem;
+
         while (current != null) {
             if (current.item > item) {
-                if (previous != null) {
-                    previous.previousStackItem = current.previousStackItem;
+                // fix some pointers before unlinking
+                if (this.smallestItem == current) {
+                    this.smallestItem = current.nextOrderedItem;
                 }
-                else {
+
+                if (previous == null) {
                     this.topStackItem = current.previousStackItem;
                 }
+
+                current.unlink(previous);
             }
             else {
                 previous = current;
@@ -109,6 +132,23 @@ public class Daily184E {
 
             current = current.previousStackItem;
         }
+//
+//
+//        while (current != null) {
+//            if (current.item > item) {
+//                if (previous != null) {
+//                    previous.previousStackItem = current.previousStackItem;
+//                }
+//                else {
+//                    this.topStackItem = current.previousStackItem;
+//                }
+//            }
+//            else {
+//                previous = current;
+//            }
+//
+//            current = current.previousStackItem;
+//        }
     }
 
     public void printStack() {
